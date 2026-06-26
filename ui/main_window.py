@@ -107,7 +107,8 @@ class MainWindow(QMainWindow):
 
         self.stats_panel.update_from_scan_report(report)
         self.ez_page.song_table.load_songs(report.ready_songs)
-
+        
+        self.ez_page.update_selected_count(0)
         logger.success(f"Loaded {report.ready_count} songs into table")
     
     def apply_styles(self):

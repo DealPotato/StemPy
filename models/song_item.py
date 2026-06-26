@@ -11,3 +11,4 @@ class SongItem:
     source_type: str
     status: str = "Ready"
     reason: str = ""
+    selected: bool = False
