@@ -16,7 +16,7 @@ def read_ini_value(ini_path: Path, key: str) -> str:
     if not ini_path.exists():
         return ""
 
-    parser = configparser.ConfigParser()
+    parser = configparser.ConfigParser(strict=False)
     parser.optionxform = str.lower
 
     try:
