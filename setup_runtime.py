@@ -17,7 +17,13 @@ APP_ROOT = Path(__file__).resolve().parent
 VENV_DIR = APP_ROOT / ".venv"
 VENV_PYTHON = VENV_DIR / "Scripts" / "python.exe"
 MARKER_PATH = VENV_DIR / ".stempy-runtime.json"
-RUNTIME_VERSION = "2026.06.28.1"
+RUNTIME_VERSION = "2026.06.28.2"
+
+# Default PyPI ships CPU-only torch wheels on Windows. Demucs depends on
+# torch, so without this CUDA index it silently installs the CPU build and
+# every separation falls back to CPU even on an NVIDIA GPU. cu124 covers
+# modern NVIDIA cards (Ampere/Ada and up).
+TORCH_CUDA_INDEX = "https://download.pytorch.org/whl/cu124"
 
 BASE_PACKAGES = [
     "setuptools<82",
@@ -56,7 +62,10 @@ def package_plan(gpu: bool) -> list[str]:
 
 
 def fingerprint(gpu: bool) -> str:
-    payload = "\n".join([RUNTIME_VERSION, sys.platform, str(gpu), *package_plan(gpu)])
+    torch_source = TORCH_CUDA_INDEX if gpu else "cpu"
+    payload = "\n".join(
+        [RUNTIME_VERSION, sys.platform, str(gpu), torch_source, *package_plan(gpu)]
+    )
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
@@ -115,6 +124,21 @@ def install_runtime(target_python: Path, gpu: bool) -> None:
     profile = "NVIDIA GPU" if gpu else "CPU"
     print(f"Installing StemPy dependencies for: {profile}", flush=True)
     run([str(target_python), "-m", "pip", "install", "--upgrade", "pip"])
+    if gpu:
+        # Install the CUDA build of torch FIRST, from the PyTorch index.
+        # Once torch is satisfied, demucs won't pull the CPU wheel from PyPI.
+        run(
+            [
+                str(target_python),
+                "-m",
+                "pip",
+                "install",
+                "torch",
+                "torchaudio",
+                "--index-url",
+                TORCH_CUDA_INDEX,
+            ]
+        )
     run([str(target_python), "-m", "pip", "install", *package_plan(gpu)])
     verify_python_runtime(target_python)
     ensure_ffmpeg()
