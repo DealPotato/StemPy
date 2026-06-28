@@ -1,0 +1,79 @@
+name: Bug report
+description: Report a reproducible StemPy problem
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not upload copyrighted song audio. Redact personal filesystem paths from logs when necessary.
+  - type: input
+    id: version
+    attributes:
+      label: StemPy version
+      placeholder: 0.1.0-beta.1
+    validations:
+      required: true
+  - type: dropdown
+    id: windows
+    attributes:
+      label: Windows version
+      options:
+        - Windows 11
+        - Windows 10
+        - Other / unsupported
+    validations:
+      required: true
+  - type: input
+    id: gpu
+    attributes:
+      label: GPU and driver
+      placeholder: NVIDIA RTX 4070, driver version ...
+    validations:
+      required: true
+  - type: input
+    id: workflow
+    attributes:
+      label: UI mode, preset, and model
+      placeholder: Advanced UI, custom preset, BS-Roformer-SW.ckpt
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      placeholder: |
+        1. Scan ...
+        2. Select ...
+        3. Start ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log lines
+      description: Paste only the relevant final section from data/logs. Redact private paths.
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Safety checks
+      options:
+        - label: I kept the StemPy Backup folder.
+          required: true
+        - label: I removed private information and did not attach copyrighted audio.
+          required: true
+        - label: I tested the newest available release.
+          required: true

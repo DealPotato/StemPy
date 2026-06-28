@@ -20,6 +20,8 @@ temp/
 
 # User Data
 backups/
+data/settings.json
+data/model_catalog.json
 
 # VS Code
 .vscode/

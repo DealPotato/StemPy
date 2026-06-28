@@ -1,11 +1,44 @@
+import importlib
 import platform
 import shutil
 import tempfile
-import importlib
+from dataclasses import dataclass
 from pathlib import Path
 
-from models.runtime_status import RuntimeStatus
 from core.logger import logger
+
+
+@dataclass
+class RuntimeStatus:
+    python_version: str
+    ffmpeg_available: bool
+    demucs_available: bool
+    audio_separator_available: bool
+    cuda_available: bool
+    gpu_name: str
+    vram_gb: float | None
+    temp_folder_ok: bool
+    write_access_ok: bool
+    models_folder_ok: bool
+    presets_folder_ok: bool
+
+    @property
+    def ready(self) -> bool:
+        return (
+            self.ffmpeg_available
+            and self.demucs_available
+            and self.audio_separator_available
+            and self.temp_folder_ok
+            and self.write_access_ok
+            and self.models_folder_ok
+            and self.presets_folder_ok
+        )
+
+    @property
+    def device_label(self) -> str:
+        if self.cuda_available:
+            return f"CUDA ({self.gpu_name})"
+        return "CPU"
 
 
 def check_write_access(folder: Path) -> bool:
@@ -19,8 +52,12 @@ def check_write_access(folder: Path) -> bool:
         return False
 
 
-def check_demucs_available() -> bool:
-    return shutil.which("demucs") is not None
+def check_import(module_name: str) -> bool:
+    try:
+        importlib.import_module(module_name)
+        return True
+    except Exception:
+        return False
 
 
 def check_cuda() -> tuple[bool, str, float | None]:
@@ -38,28 +75,49 @@ def check_cuda() -> tuple[bool, str, float | None]:
     except Exception:
         return False, "", None
 
+
+def check_required_folder(folder: Path) -> bool:
+    return folder.exists() and folder.is_dir()
+
+
 def run_runtime_check() -> RuntimeStatus:
     logger.info("Running runtime check...")
 
-    python_version = platform.python_version()
-    ffmpeg_available = shutil.which("ffmpeg") is not None
-    demucs_available = check_demucs_available()
     cuda_available, gpu_name, vram_gb = check_cuda()
 
-    temp_folder = Path(tempfile.gettempdir()) / "StemPy"
-    temp_folder_ok = check_write_access(temp_folder)
-    write_access_ok = check_write_access(Path("data"))
-
     status = RuntimeStatus(
-        python_version=python_version,
-        ffmpeg_available=ffmpeg_available,
+        python_version=platform.python_version(),
+        ffmpeg_available=shutil.which("ffmpeg") is not None,
+        demucs_available=check_import("demucs"),
+        audio_separator_available=check_import("audio_separator"),
         cuda_available=cuda_available,
         gpu_name=gpu_name,
         vram_gb=vram_gb,
-        demucs_available=demucs_available,
-        temp_folder_ok=temp_folder_ok,
-        write_access_ok=write_access_ok,
+        temp_folder_ok=check_write_access(Path(tempfile.gettempdir()) / "StemPy"),
+        write_access_ok=check_write_access(Path("data")),
+        models_folder_ok=check_required_folder(Path("models")),
+        presets_folder_ok=check_required_folder(Path("data/presets")),
     )
+
+    if status.ffmpeg_available:
+        logger.success("FFmpeg found")
+    else:
+        logger.error("FFmpeg missing")
+
+    if status.demucs_available:
+        logger.success("Demucs found")
+    else:
+        logger.error("Demucs missing")
+
+    if status.audio_separator_available:
+        logger.success("Audio Separator found")
+    else:
+        logger.error("Audio Separator missing")
+
+    if status.cuda_available:
+        logger.success(f"CUDA available: {status.gpu_name} ({status.vram_gb} GB)")
+    else:
+        logger.warning("CUDA not available, CPU mode will be used")
 
     if status.ready:
         logger.success(f"Runtime ready - Device: {status.device_label}")

@@ -1,5 +1,6 @@
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QHeaderView, QTableWidget, QTableWidgetItem
+from PySide6.QtGui import QKeySequence, QShortcut
 
 
 class SongTable(QTableWidget):
@@ -23,6 +24,13 @@ class SongTable(QTableWidget):
         self.setSelectionBehavior(QTableWidget.SelectRows)
         self.setEditTriggers(QTableWidget.NoEditTriggers)
         self.verticalHeader().setVisible(False)
+        self.cellDoubleClicked.connect(self.toggle_row_selection)
+
+        self.select_all_shortcut = QShortcut(QKeySequence("Ctrl+A"), self)
+        self.clear_shortcut = QShortcut(QKeySequence("Ctrl+D"), self)
+
+        self.select_all_shortcut.activated.connect(self.select_all_visible)
+        self.clear_shortcut.activated.connect(self.clear_all_visible)
 
     def load_songs(self, songs):
         self.all_songs = list(songs)
@@ -106,3 +114,37 @@ class SongTable(QTableWidget):
             song.selected = not getattr(song, "selected", False)
 
         self.refresh_table()
+    
+    def toggle_row_selection(self, row: int, column: int):
+        if row < 0 or row >= len(self.visible_songs):
+            return
+
+        song = self.visible_songs[row]
+        new_state = not getattr(song, "selected", False)
+        song.selected = new_state
+
+        item = self.item(row, 0)
+
+        if item:
+            self.blockSignals(True)
+            item.setCheckState(Qt.Checked if new_state else Qt.Unchecked)
+            self.blockSignals(False)
+
+        self.selection_count_changed.emit(self.selected_count())
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Space:
+            selected_rows = sorted({index.row() for index in self.selectedIndexes()})
+            self.blockSignals(True)
+            for row in selected_rows:
+                if 0 <= row < len(self.visible_songs):
+                    song = self.visible_songs[row]
+                    new_state = not getattr(song, "selected", False)
+                    song.selected = new_state
+                    item = self.item(row, 0)
+                    if item:
+                        item.setCheckState(Qt.Checked if new_state else Qt.Unchecked)
+            self.blockSignals(False)
+            self.selection_count_changed.emit(self.selected_count())
+            return
+        super().keyPressEvent(event)

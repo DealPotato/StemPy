@@ -1,6 +1,8 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
+from core.version import __version__
+
 
 class HeaderWidget(QWidget):
     def __init__(self):
@@ -10,7 +12,7 @@ class HeaderWidget(QWidget):
         title.setAlignment(Qt.AlignCenter)
         title.setObjectName("TitleLabel")
 
-        subtitle = QLabel("AI Stem Separation for Clone Hero")
+        subtitle = QLabel(f"AI Stem Separation for Clone Hero  |  v{__version__}")
         subtitle.setAlignment(Qt.AlignCenter)
         subtitle.setObjectName("SubtitleLabel")
 
