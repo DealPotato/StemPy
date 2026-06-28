@@ -15,8 +15,7 @@ proposals are welcome.
 Use Python 3.12 and a local virtual environment.
 
 ```powershell
-py -3.12 -m venv .venv
-.venv\Scripts\python.exe -m pip install -r requirements.txt
+py -3.12 setup_runtime.py
 .venv\Scripts\python.exe main.py
 ```
 

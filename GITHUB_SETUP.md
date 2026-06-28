@@ -17,11 +17,11 @@
 
 ## Recommended First Release
 
-- Tag: `v0.1.0-beta.1`
-- Title: `StemPy v0.1.0-beta.1`
-- Mark as a pre-release.
+- Tag: `v1.0.0`
+- Title: `StemPy v1.0.0`
+- Set as the latest release.
 - Copy the contents of `RELEASE_DRAFT.md` into the release description.
-- Upload `StemPy-v0.1.0-beta.1-windows-x64.zip` as the release asset.
+- Upload `StemPy-v1.0.0-windows-x64.zip` as the release asset.
 - Do not upload `.venv`, models, logs, settings, backups, or temporary files.
 
 ## Repository Settings

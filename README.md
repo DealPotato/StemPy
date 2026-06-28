@@ -7,7 +7,7 @@ audio track, separates that track with Demucs or Audio Separator models, and
 installs the results using Clone Hero-compatible filenames. Processing happens
 locally on your computer.
 
-> **Beta software:** Start with a small test selection and verify the generated
+> **Important:** Start with a small test selection and verify the generated
 > stems in Clone Hero before deleting backups.
 
 ## Features
@@ -92,13 +92,14 @@ The runtime, models, logs, settings, and temporary files are excluded from Git.
 Python 3.12 is the supported development version.
 
 ```powershell
-py -3.12 -m venv .venv
-.venv\Scripts\python.exe -m pip install -r requirements.txt
+py -3.12 setup_runtime.py
 .venv\Scripts\python.exe main.py
 ```
 
 The public release path is `Launch StemPy.bat`, which uses `setup_runtime.py`
-to create and repair the isolated runtime.
+to create and repair the isolated runtime. `requirements.txt` is provided as a
+reference; on NVIDIA systems, use the runtime setup so PyTorch is installed
+from the CUDA 12.4 package index before Demucs.
 
 ## Troubleshooting
 

@@ -1,6 +1,6 @@
-# StemPy v0.1.0-beta.1
+# StemPy v1.0.0
 
-StemPy's first public beta turns single-track Clone Hero songs into local
+StemPy's first full release turns single-track Clone Hero songs into local
 multitrack charts using Demucs, RoFormer, MDX, and other Audio Separator models.
 
 ## Highlights
@@ -22,7 +22,7 @@ multitrack charts using Demucs, RoFormer, MDX, and other Audio Separator models.
 
 ## Installation
 
-1. Download `StemPy-v0.1.0-beta.1-windows-x64.zip` below.
+1. Download `StemPy-v1.0.0-windows-x64.zip` below.
 2. Extract the complete ZIP to a writable folder.
 3. Double-click `Launch StemPy.bat`.
 4. Approve the one-time runtime installation.
@@ -30,7 +30,7 @@ multitrack charts using Demucs, RoFormer, MDX, and other Audio Separator models.
 The first setup can download several GB. An NVIDIA GPU is recommended; CPU mode
 is supported but considerably slower.
 
-## Important Beta Notes
+## Important Notes
 
 - Process one or two test songs first.
 - Verify the generated stems in Clone Hero before deleting `StemPy Backup`.

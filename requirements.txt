@@ -1,10 +1,7 @@
-# NOTE: Bu dosya kullanışlı bir referanstır ama torch/torchaudio'yu BURADAN
-# kurmayın. Windows'ta düz "pip install torch" CPU-only wheel getirir ve
-# GPU'da bile her şey CPU'da çalışır. Doğru kurulum için:  python setup_runtime.py
-# (GPU varsa torch'u https://download.pytorch.org/whl/cu124 index'inden çeker.)
+# Reference requirements for manual development setup. Use setup_runtime.py on
+# Windows so torch and torchaudio come from the correct CUDA package index.
 
 PySide6>=6.8,<7
-# torch  -> setup_runtime.py tarafından CUDA index'inden kurulur (cu124)
-# torchaudio -> aynı şekilde
+# torch and torchaudio are installed by setup_runtime.py (CUDA 12.4 on NVIDIA)
 demucs==4.0.1
-audio-separator[gpu]==0.44.2  # onnxruntime-gpu'yu kendisi getirir
+audio-separator[gpu]==0.44.2

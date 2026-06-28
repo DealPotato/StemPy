@@ -265,7 +265,7 @@ class MainWindow(QMainWindow):
         logger.info(f"Starting processing: {len(songs)} songs")
         logger.info(f"Preset: {preset.name}")
         self.set_processing_controls(False)
-        self.progress_panel.set_progress(0, len(songs))
+        self.progress_panel.start(len(songs))
 
         self.processing_worker = ProcessingWorker(songs, preset)
         self.processing_worker.progress_changed.connect(self.on_processing_progress)
@@ -283,10 +283,12 @@ class MainWindow(QMainWindow):
         successful = sum(1 for result in results if result.success)
         failed = len(results) - successful
         logger.success(f"Processing finished: {successful} successful, {failed} failed")
+        self.progress_panel.finish(completed=True)
         self.set_processing_controls(True)
 
     def on_processing_failed(self, error: str):
         logger.error(f"Processing worker failed: {error}")
+        self.progress_panel.finish(completed=False)
         self.set_processing_controls(True)
 
     def on_processing_thread_finished(self):

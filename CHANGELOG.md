@@ -2,7 +2,7 @@
 
 All notable changes to StemPy will be documented in this file.
 
-## [0.1.0-beta.1] - 2026-06-28
+## [1.0.0] - 2026-06-28
 
 ### Added
 
@@ -28,4 +28,4 @@ All notable changes to StemPy will be documented in this file.
 - Windows is the supported release platform.
 - Initial runtime setup and model downloads can require several GB.
 - AI separation quality depends on the selected model and source material.
-- This beta still needs testing across a wider range of Windows systems.
+- Hardware and model compatibility can vary across Windows systems.
